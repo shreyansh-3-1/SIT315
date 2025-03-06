@@ -1,29 +1,31 @@
-int motionPin = 2;  
-int ledPin = 13;    
-volatile bool motionDetected = false;  
+#define PIR_PIN 2
+#define LED_PIN 13
 
-void motionISR() {
-    motionDetected = true;  
-}
+bool motionDetected = false;
+
+void motionISR();
 
 void setup() {
-    pinMode(motionPin, INPUT);  
-    pinMode(ledPin, OUTPUT);    
-    Serial.begin(9600);         
+    pinMode(PIR_PIN, INPUT);
+    pinMode(LED_PIN, OUTPUT);
 
-    attachInterrupt(digitalPinToInterrupt(motionPin), motionISR, RISING);
+    Serial.begin(9600);
+    Serial.println("System Ready!");
+
+    attachInterrupt(digitalPinToInterrupt(PIR_PIN), motionISR, RISING);
 }
 
 void loop() {
-    if (motionDetected) {  
-        digitalWrite(ledPin, HIGH); 
-        Serial.println("Motion detected! LED ON");
-        
-        delay(1000); 
-
-        digitalWrite(ledPin, LOW); 
-        Serial.println("LED OFF");
-
-        motionDetected = false; 
+    if (motionDetected) {
+        Serial.println("Motion Detected!");
+        digitalWrite(LED_PIN, HIGH);
+        delay(2000);
+        digitalWrite(LED_PIN, LOW);
+        Serial.println("LED turned OFF.");
+        motionDetected = false;
     }
+}
+
+void motionISR() {
+    motionDetected = true;
 }
